@@ -20,7 +20,7 @@ describe('List', () => {
                 ],
             },
         ];
-        render(<List isLoading items={items} />);
+        render(<List isLoading items={items} emptyMessage="test" />);
 
         expect(screen.getByTestId('spinner')).toBeInTheDocument();
         expect(screen.queryByTestId('cardContainer')).not.toBeInTheDocument();
@@ -38,7 +38,7 @@ describe('List', () => {
                 ],
             },
         ];
-        render(<List isLoading={false} items={items} />);
+        render(<List isLoading={false} items={items} emptyMessage="test" />);
 
         expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
         expect(screen.getByTestId('cardContainer-1')).toBeInTheDocument();
@@ -65,9 +65,15 @@ describe('List', () => {
                 ],
             },
         ];
-        render(<List isLoading={false} items={items} />);
+        render(<List isLoading={false} items={items} emptyMessage="test" />);
 
         expect(screen.getByTestId('cardContainer-1')).toBeInTheDocument();
         expect(screen.getByTestId('cardContainer-2')).toBeInTheDocument();
+    });
+
+    it('should render empty message when items is empty', () => {
+        render(<List isLoading={false} items={[]} emptyMessage="test empty message" />);
+
+        expect(screen.getByText('test empty message')).toBeInTheDocument();
     });
 });
