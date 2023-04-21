@@ -4,33 +4,17 @@ import {UserData} from 'types';
 import Card from '../components/Card';
 import {Container} from '../components/GlobalComponents';
 import Header from '../components/Header';
-
-var mapU = (user: UserData) => {
-    var columns = [
-        {
-            key: 'Name',
-            value: `${user.firstName} ${user.lastName}`,
-        },
-        {
-            key: 'Display Name',
-            value: user.displayName,
-        },
-        {
-            key: 'Location',
-            value: user.location,
-        },
-    ];
-    return <Card columns={columns} hasNavigation={false} navigationProps={user} />;
-};
+import {mapUserColumns} from './mapUserColumns';
 
 const UserOverview = () => {
     const location = useLocation();
+    const user: UserData = location.state;
+
     return (
         <Container>
-            <Header
-                title={`User ${location.state.firstName} ${location.state.lastName}`}
-            />
-            {mapU(location.state)}
+            <Header title={`User ${user.firstName} ${user.lastName}`} />
+
+            <Card columns={mapUserColumns(user)} hasNavigation={false} navigationProps={user} />
         </Container>
     );
 };

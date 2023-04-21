@@ -10,18 +10,6 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('Header', () => {
-    beforeAll(() => {
-        jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-        jest.clearAllTimers();
-    });
-
-    afterAll(() => {
-        jest.useRealTimers();
-    });
-
     it('should render header', () => {
         render(<Header title="Header" />);
 

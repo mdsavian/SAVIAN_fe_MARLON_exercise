@@ -4,12 +4,14 @@ import {getTeams as fetchTeams} from '../api';
 import Header from '../components/Header';
 import List from '../components/List';
 import {Container} from '../components/GlobalComponents';
+import SearchField from '../components/SearchField';
+import {WarningMessage} from './styles';
 
-var MapT = (teams: TeamsList[]) => {
+const MapTeamsList = (teams: TeamsList[]): ListItem[] => {
     return teams.map(team => {
-        var columns = [
+        const columns = [
             {
-                key: 'Name',
+                key: 'Name:',
                 value: team.name,
             },
         ];
@@ -22,15 +24,32 @@ var MapT = (teams: TeamsList[]) => {
     });
 };
 
-const Teams = () => {
-    const [teams, setTeams] = React.useState<any>([]);
-    const [isLoading, setIsLoading] = React.useState<any>(true);
+const Teams: React.FC = () => {
+    const [teams, setTeams] = React.useState<TeamsList[]>([]);
+    const [hasError, setHasError] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
+
+    const [searchTerm, setSearchTerm] = React.useState<string>('');
+
+    const filteredTeams = !searchTerm
+        ? teams
+        : teams.filter(team => team.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     React.useEffect(() => {
         const getTeams = async () => {
-            const response = await fetchTeams();
-            setTeams(response);
-            setIsLoading(false);
+            setIsLoading(true);
+
+            fetchTeams()
+                .then(response => {
+                    setHasError(false);
+                    setTeams(response);
+                })
+                .catch(() => {
+                    setHasError(true);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         };
         getTeams();
     }, []);
@@ -38,7 +57,15 @@ const Teams = () => {
     return (
         <Container>
             <Header title="Teams" showBackButton={false} />
-            <List items={MapT(teams)} isLoading={isLoading} />
+
+            <SearchField setSearchTerm={setSearchTerm} />
+            {hasError && <WarningMessage>Some error occurred</WarningMessage>}
+
+            <List
+                items={MapTeamsList(filteredTeams)}
+                isLoading={isLoading}
+                emptyMessage="No teams found"
+            />
         </Container>
     );
 };
